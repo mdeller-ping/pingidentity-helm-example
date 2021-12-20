@@ -5,16 +5,16 @@ global:
   ingress:
     enabled: true
     addReleaseNameToHost: prepend
-    defaultDomain: ping-devops.com
+    defaultDomain: localhost
     defaultTlsSecret:
     annotations:
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      kubernetes.io/ingress.class: "nginx-public"
+      kubernetes.io/ingress.class: "nginx"
 
   image:
     repository: pingidentity
     name:
-    tag: "2110"
+    tag: "2111.1"
     pullPolicy: IfNotPresent
 
   license:
