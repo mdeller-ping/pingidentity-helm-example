@@ -14,7 +14,7 @@ global:
   image:
     repository: pingidentity
     name:
-    tag: "2304"
+    tag: "2303"
     pullPolicy: IfNotPresent
 
   license:
