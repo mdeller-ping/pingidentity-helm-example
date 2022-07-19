@@ -11,12 +11,6 @@ global:
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
       kubernetes.io/ingress.class: "nginx"
 
-  image:
-    repository: pingidentity
-    name:
-    tag: "2303"
-    pullPolicy: IfNotPresent
-
   license:
     secret:
       devOps: devops-secret
@@ -27,26 +21,14 @@ global:
 
 pingfederate-admin:
   enabled: false
-  name: pingfederate-admin
-  image:
-    name: pingfederate
 
-  workload:
-    type: StatefulSet
+  # workload:
+  #  type: StatefulSet
 
   envs:
-    SERVER_PROFILE_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
-    SERVER_PROFILE_PATH: getting-started/pingfederate
+    # SERVER_PROFILE_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
+    # SERVER_PROFILE_PATH: getting-started/pingfederate
     OPERATIONAL_MODE: STANDALONE
-
-  container:
-    resources:
-      requests:
-        cpu: 0
-        memory: 1Gi
-      limits:
-        cpu: 2
-        memory: 4Gi
 
   services:
     https:
@@ -86,26 +68,12 @@ pingfederate-admin:
 
 pingaccess-admin:
   enabled: false
-  name: pingaccess-admin
-  image:
-    name: pingaccess
 
-  workload:
-    type: StatefulSet
+  # workload:
+  #  type: StatefulSet
 
   envs:
-    SERVER_PROFILE_URL: https://github.com/pingidentity/pingidentity-server-profiles.git
-    SERVER_PROFILE_PATH: getting-started/pingaccess
     OPERATIONAL_MODE: STANDALONE
-
-  container:
-    resources:
-      requests:
-        cpu: 0
-        memory: 1Gi
-      limits:
-        cpu: 2
-        memory: 4Gi
 
   services:
     https:
@@ -145,50 +113,13 @@ pingaccess-admin:
 
 pingauthorize:
   enabled: false
-  name: pingauthorize
-  image:
-    name: pingauthorize
 
-  workload:
-    type: StatefulSet
+  # workload:
+  #  type: StatefulSet
 
   envs:
     SERVER_PROFILE_URL: https://github.com/mdeller-ping/server-profile-pingauthorize.git
     SERVER_PROFILE_PATH: getting-started
-
-  container:
-    resources:
-      requests:
-        cpu: 0
-        memory: 1.5Gi
-      limits:
-        cpu: 2
-        memory: 4Gi
-
-  services:
-    https:
-      servicePort: 443
-      containerPort: 1443
-      ingressPort: 443
-      dataService: true
-    ldaps:
-      servicePort: 636
-      containerPort: 1636
-      clusterService: true
-    clusterServiceName: pingauthorize-cluster
-
-  ingress:
-    hosts:
-      - host: pingauthorize._defaultDomain_
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            serviceName: https
-    tls:
-      - secretName: _defaultTlsSecret_
-        hosts:
-          - pingauthorize._defaultDomain_
 
 #############################################################
 # pingauthorizepap values
@@ -196,44 +127,12 @@ pingauthorize:
 
 pingauthorizepap:
   enabled: false
-  name: pingauthorizepap
-  image:
-    name: pingauthorizepap
 
-  workload:
-    type: StatefulSet
+  # workload:
+  #  type: StatefulSet
 
   envs:
     HTTPS_PORT: "8443"
-
-  container:
-    resources:
-      requests:
-        cpu: 0
-        memory: .75Gi
-      limits:
-        cpu: 2
-        memory: 2Gi
-
-  services:
-    https:
-      servicePort: 8443
-      containerPort: 8443
-      ingressPort: 443
-      dataService: true
-
-  ingress:
-    hosts:
-      - host: pingauthorizepap._defaultDomain_
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            serviceName: https
-    tls:
-      - secretName: _defaultTlsSecret_
-        hosts:
-          - pingauthorizepap._defaultDomain_
 
 #############################################################
 # pingdirectory values
@@ -242,28 +141,6 @@ pingauthorizepap:
 pingdirectory:
   enabled: false
   name: pingdirectory
-  image:
-    name: pingdirectory
-
-  container:
-    replicaCount: 1
-    resources:
-      requests:
-        cpu: 50m
-        memory: 2Gi
-      limits:
-        cpu: 2
-        memory: 8Gi
-
-    terminationGracePeriodSeconds: 300
-
-    probes:
-      readinessProbe:
-        periodSeconds: 30
-        failureThreshold: 4
-      startupProbe:
-        periodSeconds: 10
-        failureThreshold: 180
 
   workload:
     type: StatefulSet
@@ -281,36 +158,6 @@ pingdirectory:
     SERVER_PROFILE_PATH: baseline/pingdirectory
     MAKELDIF_USERS: "0"
 
-  services:
-    ldap:
-      servicePort: 389
-      containerPort: 1389
-      dataService: true
-    ldaps:
-      servicePort: 636
-      containerPort: 1636
-      dataService: true
-      clusterService: true
-    https:
-      servicePort: 443
-      containerPort: 1443
-      ingressPort: 443
-      dataService: true
-    clusterServiceName: pingdirectory-cluster
-
-  ingress:
-    hosts:
-      - host: pingdirectory._defaultDomain_
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            serviceName: https
-    tls:
-      - secretName: _defaultTlsSecret_
-        hosts:
-          - pingdirectory._defaultDomain_
-
 #############################################################
 # pingdataconsole values
 #############################################################
@@ -318,44 +165,8 @@ pingdirectory:
 pingdataconsole:
   enabled: false
   name: pingdataconsole
-  image:
-    name: pingdataconsole
 
   envs:
     SERVER_PROFILE_URL: https://github.com/pingidentity/pingidentity-server-profiles
     SERVER_PROFILE_PATH: baseline/pingdataconsole
 
-  container:
-    resources:
-      requests:
-        cpu: 0
-        memory: .5Gi
-      limits:
-        cpu: 2
-        memory: 2Gi
-
-  defaultLogin:
-    server:
-      host: pingdirectory-cluster
-      port: 636
-    username: administrator
-
-  services:
-    https:
-      containerPort: 8443
-      servicePort: 8443
-      ingressPort: 443
-      dataService: true
-
-  ingress:
-    hosts:
-      - host: pingdataconsole._defaultDomain_
-        paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            serviceName: https
-    tls:
-      - secretName: _defaultTlsSecret_
-        hosts:
-          - pingdataconsole._defaultDomain_
